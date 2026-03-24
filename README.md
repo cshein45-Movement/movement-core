@@ -70,8 +70,7 @@ Publications & Community:
 ---
 
 ```
-Add the following meta tag to the <head> section of the website homepage to verify domain ownership.
 
 <meta name="talentapp:project_verification" content="862a83af38d3d343752e9433d6ac2398305aeb329a4da0382dd0644ae451c5b689ca1f0f1cbf75c34c5da900521568945c8be930adde3d8850b52e2750971909">
 
----
+
