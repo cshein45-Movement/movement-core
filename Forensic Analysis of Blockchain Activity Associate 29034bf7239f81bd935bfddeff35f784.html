@@ -1,0 +1,717 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Forensic Analysis of Blockchain Activity Associated with the &#x27;KoKyat&#x27; Entity on Base Mainnet
+Section 1: Executive Summary and Immediate Forensic Findings
+1.1 Summary of Immediate Transaction Context
+The forensic review centers on a captured interface detailing a pending transaction originating from an unknown source on the Base Mainnet, an Ethereum Layer 2 (L2) scaling solution. The transaction attempts to send a minuscule amount of Ether (ETH), specifically 0.00000001 ETH, valued at less than 0.01 USD at the time of the capture, to the recipient address 0xf977814e90da44bfa03b6295a0616a897441acec.
+This minimal transactional value is consistent with several low-cost on-chain activities, including &quot;dusting&quot; (sending nominal tokens to multiple addresses to track interaction) or a deliberate attempt to trigger a wallet notification or record an entry in the transaction log. Crucially, the operation is prevented by a system warning: &quot;The wallet you&#x27;ve selected is read-only&quot;. The user is exp</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="29034bf7-239f-81bd-935b-fddeff35f784" class="page sans"><header><h1 class="page-title" dir="auto">Forensic Analysis of Blockchain Activity Associated with the &#x27;KoKyat&#x27; Entity on Base Mainnet<br/>Section 1: Executive Summary and Immediate Forensic Findings<br/>1.1 Summary of Immediate Transaction Context<br/>The forensic review centers on a captured interface detailing a pending transaction originating from an unknown source on the Base Mainnet, an Ethereum Layer 2 (L2) scaling solution. The transaction attempts to send a minuscule amount of Ether (ETH), specifically 0.00000001 ETH, valued at less than 0.01 USD at the time of the capture, to the recipient address 0xf977814e90da44bfa03b6295a0616a897441acec.<br/>This minimal transactional value is consistent with several low-cost on-chain activities, including &quot;dusting&quot; (sending nominal tokens to multiple addresses to track interaction) or a deliberate attempt to trigger a wallet notification or record an entry in the transaction log. Crucially, the operation is prevented by a system warning: &quot;The wallet you&#x27;ve selected is read-only&quot;. The user is explicitly informed that the transaction cannot be signed unless they &quot;import the private keys or recovery phrase to access the funds&quot;. This immediate operational blockage constitutes a critical alert, as it establishes the technical prerequisite for a sophisticated psychological manipulation campaign often seen in cryptocurrency fraud.<br/>1.2 Summary of &#x27;KoKyat&#x27; Entity Classification<br/>The nametag &#x27;KoKyat&#x27; is highly associated with an ERC-1155 Multi-Token Standard project. The ERC-1155 standard is an advanced smart contract architecture that permits the management of fungible, non-fungible, and semi-fungible tokens all within a single contract. This suggests that &#x27;KoKyat&#x27; is not merely a single digital asset but rather an entire digital ecosystem—potentially a decentralized application (DApp) or a comprehensive digital collection. Research evidence points to a potential associated ERC-1155 contract address: 0x54f456b544abfb785694400bcb1d85629b2d437f. The sophisticated nature of the token standard employed necessitates a high level of technical competency from its creators, which often complicates simple security assessments.<br/>1.3 Key Risk Indicators (KRIs)<br/>The convergence of the wallet&#x27;s read-only status and the implied urgency to &quot;access the funds&quot; aligns perfectly with established cryptocurrency fraud models. These models, often referred to as &quot;Frozen Fund&quot; or &quot;Wallet Upgrade&quot; scams, utilize the initial inability to move assets as leverage. The perpetrators subsequently exploit the victim&#x27;s frustration by demanding a payment (often in ETH) or, more dangerously, soliciting the victim’s private keys or recovery phrase under the guise of an &quot;account upgrade&quot; or &quot;unlocking procedure&quot;. The explicit instruction displayed in the captured image is a foundational element in initiating this form of digital asset compromise.<br/>Table 1: Summary of Key Identified Blockchain Addresses and Context<br/>| Entity/Address (Truncated) | Full Address | Type | Chain/Network | Associated Context |<br/>|---|---|---|---|---|<br/>| Target Address | 0xf977814e90da44bfa03b6295a0616a897441acec | EOA/Unknown | Base Mainnet | Recipient of the dust ETH transaction; focus of the read-only wallet attempt. |<br/>| Potential KoKyat Contract | 0x54f456b544abfb785694400bcb1d85629b2d437f | Smart Contract (ERC-1155) | Base/Ethereum | Highly probable contract address for the multi-token &#x27;KoKyat&#x27; project. |<br/>| Movement DAO Test Wallet | 0xb2cA1CAecd1D3e9bF84B9332cb4aB11961639a5c | EOA/Test Wallet | Movement Testnet | Collateral address linked to Web3Auth/Movement SDK integration. |<br/>Section 2: Base Network Infrastructure and Forensic Tooling<br/>2.1 The Base Ecosystem and Layer 2 Efficiency<br/>The activity observed is situated on Base Mainnet, an Ethereum Layer 2 solution launched by Coinbase in 2023. Base is architecturally constructed using the Optimism OP Stack, ensuring a high level of security by leveraging the consensus and data availability of the Ethereum Layer 1 chain.<br/>A critical operational characteristic of Base is its exceptional cost-efficiency; typical transactions cost less than 1 cent. This high throughput and low-cost environment significantly alters the operational dynamics for smart contract developers and, critically, for illicit operators. The low barrier to entry on cost-efficient L2s, in contrast to the high gas costs historically found on Ethereum L1, encourages the migration of complex fraud schemes to networks like Base. This emerging security trend allows malicious entities to execute large-scale dusting campaigns, rapid disposable contract deployments, and high-volume phishing attempts, dramatically lowering the operational cost of running an extensive scam campaign and increasing the volume of potential victims targeted per dollar spent.<br/>2.2 Forensic Tooling and Data Availability<br/>Given the foundation of Base as an Ethereum Virtual Machine (EVM)-compatible L2, comprehensive forensic tracing is fully supported by established blockchain explorers. The investigation can utilize dedicated block explorers for the Base network, including Basescan , Base Blockscout , and OKLink. These platforms are indispensable for validating the integrity of the &#x27;KoKyat&#x27; smart contract, analyzing its transaction history, determining the contract&#x27;s deployer, and tracing the movement of associated addresses.<br/>The reputation of Coinbase, a major regulated financial entity, as the backer of Base  often instills a perceived level of trust in the network&#x27;s ecosystem. Malicious actors frequently exploit this implied institutional association to lend superficial credibility to their deployed contracts. Users may overlook critical security checks, operating under the mistaken assumption that a blockchain linked to a major exchange is inherently safer, despite the decentralized and permissionless nature of smart contract deployment on the network itself. Therefore, even on Base, exhaustive verification via decentralized forensic tools remains mandatory for risk mitigation.<br/>Section 3: Detailed Forensic Analysis of the Wallet Log<br/>3.1 Analysis of the Read-Only Wallet Status<br/>The &quot;read-only&quot; status is the single most important technical detail displayed in the transaction log. Technically, a read-only wallet is monitored via its public address but lacks the necessary private key or recovery phrase to sign and broadcast transactions. While this is a standard security practice for monitoring large cold storage wallets or compromised addresses, its presence during an attempted transaction is a pivotal component of fraud.<br/>The &quot;read-only&quot; status directly facilitates the &quot;Frozen Funds&quot; psychological operation. If the victim has received an unsolicited &quot;prize&quot; (such as a &#x27;KoKyat&#x27; NFT or a large token reward) into this specific address, they will observe the asset balance but be unable to move it because the wallet lacks signing capability. The captured image explicitly demands the private keys or recovery phrase to &quot;access the funds&quot;. This technical reality is then weaponized by the scammer, who, often posing as &quot;customer support,&quot; confirms that the account is &quot;frozen&quot; or requires an immediate, costly &quot;upgrade&quot; or funding to unlock the supposed winnings. The display of this prompt in conjunction with the activity surrounding &#x27;KoKyat&#x27; constitutes the precise technical prerequisite for a fraud attempt.<br/>3.2 Analysis of the Target Address and Transaction Value<br/>The attempted transaction involves sending 0.00000001 ETH to the recipient address, 0xf977814e90da44bfa03b6295a0616a897441acec. This minimal ETH transfer is widely recognized as a dusting technique. The objective is not financial gain from the small amount itself, but rather to draw the user&#x27;s attention to their wallet activity, potentially synchronizing the transaction with a separate, external notification that claims the user has won a prize or needs to take immediate action.<br/>The target address (0xf977...acec) must be flagged for intensive tracing across Base explorers. It will likely serve one of two roles if connected to a scam: either it is the wallet controlled by the scammer designed to receive small &quot;unlocking fees&quot; (the cost of the 0.01 ETH transaction or other gas-fee demands) or it is an address intentionally chosen to create a fraudulent transaction history trail that directs the user toward a malicious DApp interface.<br/>A further socio-forensic observation must be integrated: the user query included explicit text in the Burmese language (&quot;ဒါကဘာကိုဆိုလိုတာလဲဆိုတာကိုရှင်းပြပါ,&quot; meaning &quot;Please explain what this means&quot;). This inclusion strongly suggests that the originator of the query, or the intended victim, interacts within a specific geographical or linguistic context, likely relating to the Myanmar region. This indicates that the associated scam operation, whether &#x27;KoKyat&#x27; or the broader phishing attack, may be running a targeted campaign utilizing localized language or distribution vectors, a key characteristic of advanced, often high-value, regional crypto fraud campaigns (e.g., Pig Butchering scams). Specialized monitoring for regionally targeted phishing activity is therefore warranted.<br/>Section 4: Technical Deconstruction of the &#x27;KoKyat&#x27; Entity<br/>4.1 ERC-1155: The Multi-Token Standard<br/>The &#x27;KoKyat&#x27; nametag&#x27;s association with the ERC-1155 standard provides significant detail regarding the project&#x27;s complexity and intent. The ERC-1155 is commonly referred to as the Multi-Token Standard because it uniquely allows a single smart contract to manage multiple token types concurrently, merging the functionalities of fungible (ERC-20), non-fungible (ERC-721), and semi-fungible tokens. This versatility makes it ideal for complex digital environments, such as decentralized games that require both unique collectible items and fungible in-game currency.<br/>The standard&#x27;s primary advantage lies in efficiency. By consolidating state management into one contract, it significantly reduces deployment complexity and allows for batch operations, such as simultaneous transfers of multiple token IDs in a single transaction using the safeBatchTransferFrom function. This efficiency results in substantial gas savings, making ERC-1155 an exceptionally attractive choice for deployment on cost-effective L2 solutions like Base.<br/>Table 2: ERC-1155 Standard Capabilities and Security Implications<br/>| Feature | Technical Description | Security/Risk Implication |<br/>|---|---|---|<br/>| Multi-Token Management | Single contract manages fungible, non-fungible, and semi-fungible tokens. | High sophistication, but complexity can hide malicious intent or obscure token value perception. |<br/>| Batch Operations | Allows multiple transfers/mints in one transaction, saving gas. | Increases the severity of loss; a single compromised approval can drain multiple assets simultaneously (batch attack vector). |<br/>| L2 Suitability | Highly efficient for use on low-cost L2s like Base. | Lowers deployment cost, enabling wider-scale scam deployment and operation. |<br/>4.2 Identification of the KoKyat Contract Address and Vulnerabilities<br/>Forensic investigation points to the probable contract address for the &#x27;KoKyat&#x27; ERC-1155 project as 0x54f456b544abfb785694400bcb1d85629b2d437f. The subsequent necessary action is to utilize Base-specific block explorers (Basescan or Blockscout) to confirm the chain of deployment (Base Mainnet is likely) and, most importantly, to perform source code verification. An unverified contract must be classified as an extreme risk, as its underlying logic remains opaque and unverifiable by the public.<br/>A specific vulnerability arises directly from the batch operation feature of ERC-1155. While efficiency is a benefit, it is also a critical threat vector. If a user is tricked into granting blanket approval to a malicious contract via the setApprovalForAll function, the attacker gains the authority to execute safeBatchTransferFrom. This means that instead of having to execute multiple transactions to steal different types of assets (ERC-20, ERC-721), the attacker can drain all of the user&#x27;s token IDs (both fungible and non-fungible) managed by that specific contract simultaneously in a single, cost-effective L2 transaction. This batch attack capability maximizes potential loss and makes the compromise swift and efficient.<br/>Furthermore, the sophisticated nature of ERC-1155 contracts, often built using standard base libraries like those from OpenZeppelin or thirdweb , suggests technical competence. However, this complexity can be intentionally employed to obfuscate malicious intent. Simple rug pulls are evolving into schemes that utilize complex smart contracts to bury subtle, high-impact backdoors, such as hidden minting capabilities or permission escalation protocols. If the &#x27;KoKyat&#x27; project is leveraging its sophisticated architecture to either mimic or claim partnership with legitimate projects (for instance, those related to metaverse infrastructure like Movevent DAO, discussed in Section 5), it may also represent an IP theft vector designed to lure investors or developers in a niche market.<br/>Section 5: On-Chain Activity Trace and Associated Entities<br/>5.1 Analysis of Collateral Development Artifacts<br/>The investigation uncovered a related artifact: the address 0xb2cA1CAecd1D3e9bF84B9332cb4aB11961639a5c is explicitly designated as a &quot;Test Wallet&quot; for the &quot;Movevent DAO / Movement Network Foundation&quot;. This foundation is associated with the Movement SDK, which focuses on advanced tracking features—specifically body, face, and eye tracking—for virtual avatars within metaverse experiences, often utilizing platforms like Unity.<br/>This collateral discovery establishes a compelling thematic linkage. Both the &#x27;KoKyat&#x27; ERC-1155 project (a multi-token standard essential for complex DApp/game economies) and the Movevent DAO test environment (focused on cutting-edge metaverse interaction) exist within the same niche of advanced Web3 and metaverse development. This common conceptual space suggests the user or analyst was actively tracking entities operating at the forefront of this digital asset technology.<br/>5.2 Potential Reputational Contamination<br/>The existence of this thematic link generates concern regarding intentional reputational contamination. If &#x27;KoKyat&#x27; is indeed a fraudulent scheme, it may be designed to intentionally mimic or affiliate itself with legitimate, well-funded projects like Movevent DAO (which uses recognized development tools like Web3Auth and Meta&#x27;s SDKs). This is a common tactic to manufacture a veneer of trust and technological legitimacy, thereby making the phishing or scam attempt more believable to users tracking that specific development sector.<br/>Consequently, detailed forensic analysis must be performed comparing the operational footprint of the identified &#x27;KoKyat&#x27; contract (0x54f456b5...) and the Movevent test environment. This investigation must seek shared resources, such as overlapping funding addresses, common contract deployers, or identical deployment scripts, which would confirm a direct link or intentional mimicry operation.<br/>5.3 Erosion of Testnet Boundaries<br/>The tracking of a Movement Testnet address (0xb2cA1C...)  alongside a Base Mainnet transaction highlights a recurring user behavior: the blurring of lines between test and production blockchain environments. Users and developers tracking complex, cross-chain DApps often navigate both testnets (like Base Sepolia ) and mainnets.<br/>A significant consequence of this habit is that users may become desensitized to technical warnings or security prompts that are frequently encountered on testnets (e.g., warnings about unverified contracts or unusual transaction traces). This desensitization can lead victims to interact carelessly with mainnet contracts, such as a potentially malicious &#x27;KoKyat&#x27; contract, or dangerously dismiss the &quot;read-only&quot; warning displayed in the image as a benign configuration error, rather than recognizing it as a critical security threat in the context of the Base Mainnet.<br/>Section 6: Security Vulnerability and Financial Threat Assessment<br/>6.1 The &quot;Frozen Funds&quot; Scam Paradigm<br/>The observed wallet state, characterized by the &quot;read-only&quot; warning and the pending small ETH transfer, is the operational starting point for a well-documented category of crypto fraud known as the &quot;Frozen Funds&quot; scam.<br/>The fraudulent mechanism operates on a psychological basis, leveraging the lure of unrealistic returns and manufactured urgency. The campaign typically begins with the victim receiving an unsolicited, high-value asset—in this case, possibly a &#x27;KoKyat&#x27; ERC-1155 token—with an associated notification that claims a massive prize (such as &quot;Win 135.000$&quot; or substantial ETH rewards). When the victim attempts to liquidate the prize or perform any transaction (like the one displayed in the log), the &quot;read-only&quot; status halts the process.<br/>Scammers, acting as &quot;customer support,&quot; then enforce the manipulation, informing the victim that the account is &quot;frozen&quot; due to compliance issues or requires an &quot;upgrade&quot; to a higher status (e.g., &quot;Titan Status&quot; or a &quot;Standard 80,000 USDT&quot; wallet size). This trick forces the victim to transfer new funds—often high-value stablecoins or ETH for gas—to an attacker-controlled address, which are subsequently lost, mirroring forensic precedents documented against entities like Propichain, btc01.org, and Crypto-Networks.net.<br/>Table 3: Phishing and Scam Pattern Mapping<br/>| Observed Transaction/Wallet State | Scam Tactic Used | Forensic Precedent |<br/>|---|---|---|<br/>| &quot;The wallet you&#x27;ve selected is read-only&quot; | Psychological manipulation: Frozen Funds/Account Lock. | Consumer reports of Propichain, btc01.org, and Crypto-Networks freezing accounts and demanding &quot;upgrade fees&quot;. |<br/>| Minimal ETH transaction (0.00000001 ETH) | Dusting/Notification Trigger. | Scammers send small amounts of tokens or ETH to force a notification, drawing the user to the transaction or wallet balance. |<br/>| Implied &quot;Win&quot; or &quot;Reward&quot; context (&#x27;KoKyat&#x27; NFT) | Unrealistic Returns/Prize Lure. | Warnings regarding high-yield rewards (45 ETH, $135,000 Win) used to justify illegal withdrawal fees or upgrades. |<br/>6.2 The Direct Threat of Private Key Exposure<br/>The immediate and paramount security threat is the explicit instruction displayed in the wallet interface: &quot;You&#x27;ll need to import the private keys or recovery phrase to access the funds&quot;. While this is a technically accurate statement regarding read-only wallets, if delivered in tandem with the pressure of a supposed frozen prize, it becomes the ultimate step toward self-compromise.<br/>Sophisticated attackers will direct the victim, under the guise of technical support, to a malicious website or DApp interface that promises to facilitate the &quot;key import&quot; or &quot;account verification,&quot; capturing the private keys or seed phrase. If the victim complies, this action grants the attacker unrestricted access to drain all assets from the wallet, far exceeding the initial, small-scale fund demands of the fee scam. Forensic data shows that victims who comply with requests for additional funds or sensitive keys post-account freeze often suffer complete financial loss.<br/>6.3 Secondary Vulnerabilities and Platform Dependency<br/>The complexity of ERC-1155 transfers also introduces secondary risk factors. Even if &#x27;KoKyat&#x27; were a legitimate asset, transferring ERC-1155 tokens can be challenging via simple wallet interfaces like MetaMask mobile, especially if the asset was originally acquired or deployed through a centralized marketplace. Historical reports indicate that centralized platforms may suspend user accounts without warning, forcing users to attempt complex, direct smart contract interaction via block explorers to access their assets. Scammers are highly adept at exploiting this complexity, directing frustrated users to fake block explorer interfaces or malicious contract interaction pages to capture inputs or solicit signatures.<br/>Section 7: Conclusions and Mitigation Strategies<br/>7.1 Synthesis of Forensic Findings<br/>The transactional data associated with the &#x27;KoKyat&#x27; nametag presents a high-risk security scenario. The activity observed on the Base Mainnet—a minuscule ETH transfer targeting a known address in a wallet flagged as &quot;read-only&quot;—is consistent with the technical setup phase of a sophisticated &quot;Frozen Funds&quot; or &quot;Wallet Upgrade&quot; scam.<br/>The target entity, &#x27;KoKyat,&#x27; is associated with the complex, multi-token ERC-1155 standard. While this standard provides efficiency benefits (like batch operations) for legitimate projects, these features also introduce severe vulnerabilities, allowing an attacker to drain multiple types of assets simultaneously if blanket approval is compromised. The operational context suggests this activity is localized to a community interested in advanced Web3/metaverse development (as demonstrated by the link to Movevent DAO testing environments ) and potentially targeted toward specific linguistic groups (as indicated by the Burmese language inclusion in the query).<br/>7.2 Immediate Security Posture Adjustments<br/>Based on the forensic analysis, immediate protective measures are required to prevent fund loss or full wallet compromise:<br/> * Strict Avoidance of Key Input: Under no circumstances should the private keys or recovery phrase be imported into the current wallet interface or any third-party link, regardless of claims regarding &quot;unlocking&quot; or &quot;upgrading&quot; the account. The display of this prompt during a potential scam context must be treated as a direct compromise attempt.<br/> * Asset Migration: All other assets remaining within the monitored address (0xf977...acec) must be transferred immediately to a cold storage solution or a new, secure wallet whose private key is entirely unknown to the compromised environment.<br/> * Use of Verified Explorers: All information regarding token balances, transaction history, and contract interaction must be exclusively verified through official, trusted Base block explorers, such as Basescan or Base Blockscout, to avoid interaction with fraudulent links or interfaces.<br/>7.3 Strategy for &#x27;KoKyat&#x27; Entity Verification<br/>To conclusively assess the nature of the &#x27;KoKyat&#x27; entity, a technical investigation is required:<br/> * Contract Verification and Audit: The identified ERC-1155 contract address (0x54f456b5...) must be searched on Basescan or Blockscout. If the source code is unverified, it presents an unacceptable risk profile and should be blacklisted until an external, professional security audit can confirm the absence of backdoors, malicious functions, or critical vulnerabilities.<br/> * Address Monitoring: Continuous monitoring should be established for the target address (0xf977...acec) and the potential &#x27;KoKyat&#x27; contract address to track any large movements of funds, further dusting transactions, or the deployment of new, related contracts, which could signal an imminent pump-and-dump or rug pull event.<br/> * Trace Funding Sources: The transaction history and funding sources of the &#x27;KoKyat&#x27; contract should be exhaustively traced to determine if they share operational resources with known scam addresses or if the contract was funded via illicit means. The presence of shared funding with the Movevent DAO test environment must also be investigated to confirm or refute the intentional use of reputational contamination.<br/></h1><p class="page-description" dir="auto"></p><table class="properties"><tbody><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/profile_gray.svg" style="width:14px;height:14px;display:block"/></span>Purpose</th><td></td></tr></tbody></table></header><div class="page-body"></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
