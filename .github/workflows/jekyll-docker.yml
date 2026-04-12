@@ -1,0 +1,33 @@
+name: Movement Core CI
+
+on:
+  push:
+    branches: ["mint"]
+  pull_request:
+    branches: ["mint"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+          bundler-cache: true
+
+      - name: Install dependencies
+        run: bundle install
+
+      - name: Build Jekyll site
+        run: bundle exec jekyll build --future
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jekyll-site
+          path: _site
