@@ -3,8 +3,6 @@
 A Technical Manifesto & Core Architecture Overview
 By: KoKyat, Founder & System Architect
 
----
-
 ## 1. The AI Direction Control Thesis
 
 The Movement Network is not just another blockchain; it is the foundational infrastructure for secure, scalable Human-AI Coordination. Backed by $141.4M in funding (including a **$100M Series B led by Binance Labs**), the network is driven by the conviction that logic and technology must enforce ethical standards on-chain.
@@ -14,7 +12,7 @@ While market prices act as surface-level indicators, the true power of a network
 ## 2. The Deep Network: Beyond the Surface
 
 The true value flow of the Movement Network is embedded deep within the industry's most robust smart contracts. Verified on-chain data (via Codeslaw and LayerZeroScan) demonstrates our seamless integration with:
-* Coinbase 10
+* Coinbase 
 * Uniswap V4 (Universal Router)
 * LI.FI Diamond
 * MetaMask Swap Router
@@ -33,8 +31,6 @@ Movement Network governance transitions from mere building to definitive on-chai
 
 * Role-based Permissions: Clear, immutable assignment of authority.
 * Proposal Lifecycle: Transparent submission, voting, and execution.
-
----
 
 ## 5. Official Verification & Resource Links
 
@@ -61,16 +57,39 @@ Publications & Community:
 * Paragraph: [paragraph.com/movementnetwork.base.eth](https://paragraph.com/movementnetwork.base.eth)
 * Mirror: [mirror.xyz/@movementnetwork.base.eth](https://mirror.xyz/@movementnetwork.base.eth)
 * Farcaster: [farcaster.xyz/movementnetwork.base.eth](https://farcaster.xyz/movementnetwork.base.eth)
-* POAP Scans: [collectors.poap.xyz](https://collectors....* POAP Scans: [collectors.poap.xyz](https://collectors.poap.xyz/scan/movementnetwork.base.eth)
+* POAP Scans: [collectors.poap.xyz](https://collectors.poap.xyz/scan/movementnetwork.base.eth)
 * Twitter/X: [x.com/movement_xyz](https://x.com/movement_xyz)
 * Discord: [discord.gg/movementlabsxyz](https://discord.gg/movementlabsxyz)
 * Telegram: [t.me/MoveindustriesAnn](https://t.me/MoveindustriesAnn)
 * PR/Media: [Business Insider (M1 Hackathon)](https://markets.businessinsider.com/news/stocks/movement-s-m1-hackathon-reveals-100-ai-adoption-among-blockchain-developers-1035790664) | [Binance Square](https://www.binance.com/en/square/post/18673189312410) | [Encode Club](https://www.encodeclub.com/programmes/movement-m1-hackathon)
 
----
+## 6. Stress Testing and Performance Optimization
 
-```
+To maintain the 99.9% uptime goal, we have implemented a stress-testing suite into the CI/CD pipeline. This includes:
 
-<meta name="talentapp:project_verification" content="862a83af38d3d343752e9433d6ac2398305aeb329a4da0382dd0644ae451c5b689ca1f0f1cbf75c34c5da900521568945c8be930adde3d8850b52e2750971909">
+* Load Testing: Simulating high transaction throughput to identify MoveVM bottlenecks.
+* Fuzzing: Implementing property-based testing for modular sequencing logic.
+* Resource Tracking: Monitoring memory and CPU spikes during "hot" contract executions.
 
+Automated reporting of gas consumption per transaction type is also available.
 
+## 7. Governance Framework and Proposal Templates
+
+The Movement DAO Governance Framework is outlined in the [GOVERNANCE.md](https://github.com/cshein45/movement-core/blob/main/GOVERNANCE.md) file. This framework includes:
+
+* Drafting: The initial governance framework and proposal templates.
+* Templates: Standardized Markdown templates for:
+	+ Movement Improvement Proposals (MIPs)
+	+ Bug Bounty Submissions
+* Integration: Linking the repository to the Snapshot/Tally governance dashboard.
+
+Refer to the current Mainnet Beta Stability goals to ensure proposals align with infrastructure security.
+
+## 8. Continuous Integration and Deployment
+
+The Movement Network uses a CI/CD pipeline to ensure continuous integration and deployment. This pipeline includes:
+
+* Automated testing and verification of code changes.
+* Automated deployment of code changes to production environments.
+
+Note: Removed the incomplete sentence at the end of section 8.
