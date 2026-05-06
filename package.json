@@ -1,0 +1,33 @@
+{
+  "name": "movement-core",
+  "version": "1.0.0",
+  "description": "Foundational architecture and governance logic for the Movement Network",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "vitest",
+    "lint": "tsc --noEmit"
+  },
+  "keywords": [
+    "movement",
+    "governance",
+    "ai-coordination",
+    "decentralized"
+  ],
+  "author": "Movement Network",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "fastify": "^4.25.2",
+    "@vercel/analytics": "^1.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.6",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3",
+    "eslint": "^8.56.0",
+    "vitest": "^1.1.0"
+  }
+}
