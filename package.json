@@ -1,0 +1,39 @@
+{
+  "name": "movement-core",
+  "version": "1.0.0",
+  "description": "Movement Core - A modular civilization layer for blockchain infrastructure",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "lint": "eslint src --ext .ts",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "keywords": [
+    "blockchain",
+    "movement",
+    "governance",
+    "defi",
+    "fastify"
+  ],
+  "author": "Movement Network",
+  "license": "MIT",
+  "dependencies": {
+    "@vercel/analytics": "^1.1.1",
+    "fastify": "^4.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.0",
+    "tsx": "^4.7.0",
+    "eslint": "^8.55.0",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

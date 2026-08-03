@@ -9,7 +9,7 @@ const fastify = Fastify({
 initializeAnalytics();
 
 // Register a hook to track page views
-fastify.addHook("onRequest", async (request, reply) => {
+fastify.addHook("onRequest", async (request, _reply) => {
   // Track the page view with Vercel Analytics
   trackPageView({
     pathname: request.url,
@@ -18,12 +18,12 @@ fastify.addHook("onRequest", async (request, reply) => {
 });
 
 // Health check endpoint
-fastify.get("/health", async (request, reply) => {
+fastify.get("/health", async (_request, _reply) => {
   return { status: "ok" };
 });
 
 // Example API endpoint
-fastify.get("/api/governance", async (request, reply) => {
+fastify.get("/api/governance", async (_request, _reply) => {
   return {
     message: "Movement Network Governance",
     version: "1.0.0",
