@@ -1,33 +1,34 @@
 # Getting Started with Vercel Web Analytics
 
-This guide helps you get started with using Vercel Web Analytics on the Movement Core project. It covers how to enable it, add the package to your project, deploy your app to Vercel, and view your data in the dashboard.
+This guide helps you get started with using the official Vercel Web Analytics on the Movement Core project. It covers how to enable it, add the package to your project, deploy your app to Vercel, and view your data in the dashboard.
 
 ## Prerequisites
 
 - A Vercel account. If you don't have one, you can [sign up for free](https://vercel.com/signup).
 - A Vercel project. If you don't have one, you can [create a new project](https://vercel.com/new).
-- The Vercel CLI installed. If you don't have it, you can install it using the following command:
+- Node.js 18+ installed on your system
+- The Vercel CLI installed (recommended). If you don't have it, you can install it using the following command:
 
 ### Install the Vercel CLI
 
 Using npm:
 ```bash
-npm i vercel
+npm i -g vercel
 ```
 
 Using pnpm:
 ```bash
-pnpm i vercel
+pnpm i -g vercel
 ```
 
 Using yarn:
 ```bash
-yarn i vercel
+yarn global add vercel
 ```
 
 Using bun:
 ```bash
-bun i vercel
+bun add -g vercel
 ```
 
 ## Enable Web Analytics in Vercel
@@ -38,26 +39,41 @@ On the [Vercel dashboard](/dashboard), select your Project and then click the **
 
 ## Add `@vercel/analytics` to Your Project
 
-The `@vercel/analytics` package is already included in the Movement Core project dependencies. However, if you need to add it manually, use your package manager of choice:
+The official `@vercel/analytics` package (v1.3.1) is already included in the Movement Core project dependencies. 
+
+To install it in your own project, use your package manager of choice:
 
 ### Using npm:
 ```bash
-npm i @vercel/analytics
+npm install @vercel/analytics
 ```
 
 ### Using pnpm:
 ```bash
-pnpm i @vercel/analytics
+pnpm add @vercel/analytics
 ```
 
 ### Using yarn:
 ```bash
-yarn i @vercel/analytics
+yarn add @vercel/analytics
 ```
 
 ### Using bun:
 ```bash
-bun i @vercel/analytics
+bun add @vercel/analytics
+```
+
+### Verify Installation
+
+Check your `package.json` to confirm the package is listed:
+
+```json
+{
+  "dependencies": {
+    "@vercel/analytics": "^1.3.1",
+    "fastify": "^5.2.0"
+  }
+}
 ```
 
 ## Integration for Fastify Backend
