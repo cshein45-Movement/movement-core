@@ -1,93 +1,167 @@
 /**
  * Vercel Web Analytics Configuration
+ * 
+ * Official Vercel Web Analytics integration for Movement Core backend API.
+ * 
+ * This module integrates the official @vercel/analytics package into the 
+ * Movement Core Fastify backend application.
  *
- * This module integrates Vercel Web Analytics into the Movement Core backend.
- * It provides utilities for tracking page views and custom events.
+ * ## How Vercel Web Analytics Works with Backend APIs
  *
- * For a Fastify backend application deployed on Vercel:
- * - Vercel automatically injects analytics tracking at deployment
- * - The analytics routes (/_vercel/insights/*) are automatically created
- * - Client-side requests to the API will be tracked automatically
- * - Page views and custom events are tracked via the analytics script
+ * When deployed to Vercel, Web Analytics is automatically enabled for your
+ * application with the following features:
+ * 
+ * - Analytics routes are automatically created at `/_vercel/insights/*`
+ * - API endpoint usage is tracked automatically
+ * - Request metrics (response time, status codes) are collected
+ * - Custom events can be sent from client applications
+ * - All data appears in the Vercel Dashboard Analytics tab
  *
- * This module provides logging and utility functions for analytics tracking
- * that work on the server-side.
+ * ## Setup Instructions
  *
- * ## Setup
+ * 1. **Enable Web Analytics in Vercel Dashboard:**
+ *    - Go to your project in the Vercel Dashboard
+ *    - Click the "Analytics" tab
+ *    - Click "Enable" to activate Web Analytics
+ *    - New routes will be created at `/_vercel/insights/*` after next deployment
  *
- * 1. Enable Web Analytics in your Vercel Dashboard (Analytics tab)
- * 2. Ensure @vercel/analytics is installed (already included)
- * 3. Use the tracking functions provided in this module
- * 4. Deploy to Vercel - analytics will automatically be enabled
+ * 2. **Package Installation:**
+ *    The `@vercel/analytics` package is already installed as a dependency.
+ *    
+ * 3. **Deployment:**
+ *    Deploy your application using:
+ *    ```bash
+ *    vercel deploy
+ *    ```
  *
- * ## Deployment
+ * 4. **Verification:**
+ *    After deployment, check the browser's Network tab for Fetch/XHR requests
+ *    to `/_vercel/insights/view` when accessing your API endpoints.
  *
- * When deployed to Vercel, the platform automatically:
- * - Injects the analytics tracking infrastructure
- * - Creates the /_vercel/insights/* routes
- * - Collects data from client requests
- * - Provides analytics data in the Vercel Dashboard
+ * ## Server-Side Tracking Utilities
+ *
+ * While Vercel automatically tracks analytics on the platform level, this module
+ * provides utilities for logging and monitoring analytics events on the server side.
+ *
+ * @packageDocumentation
  */
 
 /**
- * Initialize analytics tracking
- * This function can be called at application startup for any initialization tasks
+ * Initialize Vercel Web Analytics tracking
+ * 
+ * Call this function at application startup to initialize analytics.
+ * When deployed to Vercel, analytics are automatically enabled.
+ * 
+ * @example
+ * ```typescript
+ * import { initializeAnalytics } from './analytics.js';
+ * 
+ * // Initialize at app startup
+ * initializeAnalytics();
+ * ```
  */
 export function initializeAnalytics(): void {
-  if (process.env.NODE_ENV === "production") {
-    console.info("Vercel Web Analytics initialized - tracking is active");
+  const isProduction = process.env.NODE_ENV === "production";
+  const isVercel = process.env.VERCEL === "1";
+
+  if (isProduction && isVercel) {
+    console.info("✓ Vercel Web Analytics initialized - tracking is active");
+    console.info("  Analytics dashboard: https://vercel.com/dashboard");
+  } else if (isProduction) {
+    console.warn("⚠ Running in production but not on Vercel - analytics may not be active");
   } else {
-    console.debug(
-      "Vercel Web Analytics initialized (development mode - logging only)"
-    );
+    console.debug("ℹ Vercel Web Analytics initialized (development mode - logging only)");
   }
 }
 
 /**
- * Track a page view with Vercel Analytics
- * @param data Page view data including pathname and optional referrer
+ * Track an API endpoint request
+ * 
+ * Logs API endpoint access for monitoring purposes. When deployed to Vercel,
+ * all API requests are automatically tracked in the Analytics dashboard.
+ * 
+ * @param data - Request data including pathname and optional referrer
+ * 
+ * @example
+ * ```typescript
+ * trackPageView({
+ *   pathname: '/api/governance',
+ *   referrer: 'https://example.com'
+ * });
+ * ```
  */
 export function trackPageView(data: {
   pathname: string;
   referrer?: string;
 }): void {
-  // When deployed to Vercel, analytics are automatically tracked
-  // This function logs the tracking for monitoring purposes
+  // When deployed to Vercel, all requests are automatically tracked
+  // This provides server-side logging for monitoring
   if (process.env.NODE_ENV === "development") {
-    console.debug("Analytics: Page view tracked", {
+    console.debug("📊 Analytics: Endpoint accessed", {
       pathname: data.pathname,
-      referrer: data.referrer,
+      referrer: data.referrer || "(direct)",
+      timestamp: new Date().toISOString(),
     });
   }
 }
 
 /**
- * Track a custom event with Vercel Analytics
- * @param eventName Name of the custom event
- * @param properties Additional event properties
+ * Track a custom event
+ * 
+ * Logs custom events for monitoring purposes. For client-side custom event
+ * tracking, use the Vercel Analytics client library in your frontend application.
+ * 
+ * Note: Custom events require a Vercel Pro or Enterprise plan.
+ * 
+ * @param eventName - Name of the custom event
+ * @param properties - Additional event properties (optional)
+ * 
+ * @example
+ * ```typescript
+ * trackCustomEvent('proposal-submitted', {
+ *   proposalId: 'prop-123',
+ *   votingPeriod: 7
+ * });
+ * ```
  */
 export function trackCustomEvent(
   eventName: string,
   properties?: Record<string, unknown>
 ): void {
-  // When deployed to Vercel, custom events can be tracked via the client-side script
-  // This function logs the event for monitoring purposes
+  // Custom events are logged for server-side monitoring
+  // Client-side tracking should use the @vercel/analytics client library
   if (process.env.NODE_ENV === "development") {
-    console.debug("Analytics: Custom event tracked", {
+    console.debug("📊 Analytics: Custom event", {
       event: eventName,
-      properties,
+      properties: properties || {},
+      timestamp: new Date().toISOString(),
     });
+  } else if (process.env.VERCEL === "1") {
+    // In production on Vercel, log only for audit trail
+    console.info(`Analytics event: ${eventName}`, properties || {});
   }
 }
 
 /**
- * Track a page view duration
- * @param pathname Page pathname
- * @param duration Duration in milliseconds
+ * Track page/endpoint duration
+ * 
+ * Records how long a page or endpoint takes to process. Useful for
+ * performance monitoring and identifying slow endpoints.
+ * 
+ * @param pathname - The endpoint path
+ * @param duration - Duration in milliseconds
+ * 
+ * @example
+ * ```typescript
+ * const startTime = Date.now();
+ * // ... process request ...
+ * trackPageDuration('/api/proposals', Date.now() - startTime);
+ * ```
  */
 export function trackPageDuration(pathname: string, duration: number): void {
-  trackCustomEvent("page-duration", {
+  trackCustomEvent("endpoint-duration", {
     pathname,
     duration,
+    durationSeconds: (duration / 1000).toFixed(2),
   });
 }

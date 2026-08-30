@@ -1,8 +1,18 @@
 /**
  * Example Fastify application with Vercel Web Analytics integration
+ * 
+ * This example demonstrates how to integrate the official @vercel/analytics
+ * package into a Fastify backend application deployed on Vercel.
  *
  * This shows how to integrate analytics into a Fastify application with
  * proper error handling and performance tracking.
+ * 
+ * ## Setup Requirements
+ * 
+ * 1. Install @vercel/analytics: `npm install @vercel/analytics`
+ * 2. Enable Web Analytics in your Vercel Dashboard (Analytics tab)
+ * 3. Deploy to Vercel using `vercel deploy`
+ * 4. Analytics will be automatically tracked at `/_vercel/insights/*`
  */
 
 import Fastify, { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
