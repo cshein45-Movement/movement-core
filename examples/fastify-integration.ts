@@ -1,12 +1,13 @@
 /**
- * Example Fastify application with Vercel Web Analytics integration
+ * Example Fastify application with Vercel Web Analytics and Speed Insights integration
  *
- * This shows how to integrate analytics into a Fastify application with
- * proper error handling and performance tracking.
+ * This shows how to integrate analytics and speed insights into a Fastify application
+ * with proper error handling and performance tracking.
  */
 
 import Fastify, { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
-import { initializeAnalytics, trackPageView, trackCustomEvent, trackPageDuration } from "../src/analytics.js";
+import { initializeAnalytics, trackPageView, trackCustomEvent } from "../src/analytics.js";
+import { initializeSpeedInsights } from "../src/speed-insights.js";
 
 /**
  * Create and configure a Fastify instance with analytics
@@ -20,6 +21,9 @@ export async function createApp(): Promise<FastifyInstance> {
 
   // Initialize analytics tracking
   initializeAnalytics();
+  
+  // Initialize Speed Insights tracking
+  initializeSpeedInsights();
 
   /**
    * Hook: Track all incoming requests
@@ -34,6 +38,7 @@ export async function createApp(): Promise<FastifyInstance> {
     });
 
     // Store start time for response tracking
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (reply as any)._startTime = startTime;
   });
 
@@ -41,6 +46,7 @@ export async function createApp(): Promise<FastifyInstance> {
    * Hook: Track response time and status
    */
   fastify.addHook("onResponse", async (request: FastifyRequest, reply: FastifyReply) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const startTime = (reply as any)._startTime || Date.now();
     const duration = Date.now() - startTime;
 
@@ -65,7 +71,7 @@ export async function createApp(): Promise<FastifyInstance> {
   /**
    * Health check endpoint
    */
-  fastify.get("/health", async (request: FastifyRequest, reply: FastifyReply) => {
+  fastify.get("/health", async (_request: FastifyRequest, _reply: FastifyReply) => {
     return { status: "ok", timestamp: new Date().toISOString() };
   });
 
@@ -74,7 +80,7 @@ export async function createApp(): Promise<FastifyInstance> {
    */
   fastify.get<{ Params: { proposalId: string } }>(
     "/api/proposals/:proposalId",
-    async (request: FastifyRequest, reply: FastifyReply) => {
+    async (request: FastifyRequest<{ Params: { proposalId: string } }>, reply: FastifyReply) => {
       try {
         // Simulate fetching proposal
         const proposal = {
@@ -104,7 +110,7 @@ export async function createApp(): Promise<FastifyInstance> {
    */
   fastify.post<{ Body: { proposalId: string; vote: "for" | "against" | "abstain" } }>(
     "/api/proposals/:proposalId/vote",
-    async (request: FastifyRequest, reply: FastifyReply) => {
+    async (request: FastifyRequest<{ Body: { proposalId: string; vote: "for" | "against" | "abstain" } }>, reply: FastifyReply) => {
       try {
         const { proposalId, vote } = request.body;
 
