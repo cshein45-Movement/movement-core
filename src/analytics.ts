@@ -16,8 +16,8 @@
  * ## Setup
  *
  * 1. Enable Web Analytics in your Vercel Dashboard (Analytics tab)
- * 2. Ensure @vercel/analytics is installed (already included)
- * 3. Use the tracking functions provided in this module
+ * 2. Install @vercel/analytics package (npm install @vercel/analytics)
+ * 3. Call inject() to initialize analytics in your application
  * 4. Deploy to Vercel - analytics will automatically be enabled
  *
  * ## Deployment
@@ -29,11 +29,19 @@
  * - Provides analytics data in the Vercel Dashboard
  */
 
+import { inject } from '@vercel/analytics';
+
 /**
  * Initialize analytics tracking
- * This function can be called at application startup for any initialization tasks
+ * This function should be called at application startup to enable Vercel Web Analytics
  */
 export function initializeAnalytics(): void {
+  // Inject Vercel Web Analytics
+  // This sets up the analytics tracking for the application
+  inject({
+    mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
+  });
+
   if (process.env.NODE_ENV === "production") {
     console.info("Vercel Web Analytics initialized - tracking is active");
   } else {
